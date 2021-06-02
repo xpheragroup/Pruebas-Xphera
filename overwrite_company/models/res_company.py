@@ -45,10 +45,14 @@ class Company(models.Model):
         _logger.critical("LdM Copiada.")
 
         if self.copy_ldm:
+            warehouse = self.warehouse_id and self.warehouse_id.company_id.id == self.id and self.warehouse_id or False
+            picking_type_id = self.env['stock.picking.type'].search([ 
+                ('warehouse_id', '=', warehouse.id)], limit=1)
+
             for ldm in self.copy_ldm:
                 new_copy_ldm = ldm.copy({
                             'company_id': self.id,
-                            'picking_type_id': self.warehouse_1.manu_type_id.id,
+                            'picking_type_id': picking_type_id.id,
                             'cost_center': None,
                             'bom_line_ids': [(6, 0, [p.id for p in ldm.bom_line_ids])],
                         })

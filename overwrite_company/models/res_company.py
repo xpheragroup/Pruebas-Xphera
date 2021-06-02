@@ -45,7 +45,7 @@ class Company(models.Model):
         _logger.critical("LdM Copiada.")
 
         if self.copy_ldm:
-            warehouse = self.warehouse_id and self.warehouse_id.company_id.id == self.id and self.warehouse_id or False
+            warehouse = self.warehouse_id #and self.warehouse_id.company_id.id == self.id and self.warehouse_id or False
             picking_type_id = self.env['stock.picking.type'].search([ 
                 ('warehouse_id', '=', warehouse.id)], limit=1)
 

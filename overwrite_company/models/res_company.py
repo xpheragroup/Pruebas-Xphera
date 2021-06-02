@@ -47,7 +47,8 @@ class Company(models.Model):
         if self.copy_ldm:
             warehouse = self.warehouse_id #and self.warehouse_id.company_id.id == self.id and self.warehouse_id or False
             picking_type_id = self.env['stock.picking.type'].search([ 
-                ('warehouse_id', '=', warehouse.id)], limit=1)
+                                    ('warehouse_id', '=', warehouse.id)], limit=1)
+            BomLine = self.env['mrp.bom.line']
 
             for ldm in self.copy_ldm:
                 new_copy_ldm = ldm.copy({
@@ -56,6 +57,14 @@ class Company(models.Model):
                             #'cost_center': None,
                             #'bom_line_ids': [(6, 0, [p.id for p in ldm.bom_line_ids])],
                         })
+
+
+                for linea_bom in ldm.bom_line_ids:
+                    BomLine.create({
+                        'bom_id': new_copy_ldm.id,
+                        'product_id': linea_bom.product_tmpl_id.product_variant_id.id,
+                        'product_qty': linea_bom.product_qty,
+                    })
                 
         else:
             raise UserError(_("No se encuentra ninguna lista de materiales asociada a la companía seleccionada."))

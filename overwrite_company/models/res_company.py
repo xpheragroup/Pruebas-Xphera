@@ -47,7 +47,7 @@ class Company(models.Model):
         if self.copy_ldm:
             for ldm in self.copy_ldm:
                 new_copy_ldm = ldm.copy({
-                            'company_id': self.company_id.id,
+                            'company_id': self.id,
                             'picking_type_id': self.warehouse_1.manu_type_id.id,
                             'cost_center': None,
                             'bom_line_ids': [(6, 0, [p.id for p in ldm.bom_line_ids])],

@@ -53,7 +53,7 @@ class Company(models.Model):
                 new_copy_ldm = ldm.copy({
                             'company_id': self.id,
                             'picking_type_id': picking_type_id.id,
-                            'cost_center': None,
+                            #'cost_center': None,
                             'bom_line_ids': [(6, 0, [p.id for p in ldm.bom_line_ids])],
                         })
                 

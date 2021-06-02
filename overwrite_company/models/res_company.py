@@ -46,8 +46,9 @@ class Company(models.Model):
 
         if self.copy_ldm:
             warehouse = self.warehouse_id #and self.warehouse_id.company_id.id == self.id and self.warehouse_id or False
-            picking_type_id = self.env['stock.picking.type'].search([ 
-                                    ('warehouse_id', '=', warehouse.id)], limit=1)
+            picking_type_id = self.env['stock.picking.type'].search([
+                                    ('warehouse_id', '=', warehouse.id), 
+                                    ('company_id', '=', self.id)], limit=1)
             BomLine = self.env['mrp.bom.line']
 
             for ldm in self.copy_ldm:
@@ -59,16 +60,10 @@ class Company(models.Model):
                     'product_qty': 1.0,
                     'type': 'normal',
                 })
-                # new_copy_ldm = ldm.copy({
-                #             'company_id': self.id,
-                #             'picking_type_id': picking_type_id.id,
-                #             #'cost_center': None,
-                #             'bom_line_ids': None,#[(6, 0, [p.id for p in ldm.bom_line_ids])],
-                #         })
-
 
                 for linea_bom in ldm.bom_line_ids:
                     BomLine.create({
+                        'company_id': self.id,
                         'bom_id': bom_created.id,
                         'product_id': linea_bom.product_tmpl_id.product_variant_id.id,
                         'product_qty': linea_bom.product_qty,

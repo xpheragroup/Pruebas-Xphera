@@ -264,7 +264,7 @@ class FormularioCliente(models.Model):
             self.ldm_producto_nuevo = bom_created
 
             total_bom_line_ids = None
-            bom_created.bom_line_ids = None
+            #bom_created.bom_line_ids = None
 
             for sede_product_template in self.sede_seleccionada:
                 for area in sede_product_template.bom_ids:

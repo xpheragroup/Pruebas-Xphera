@@ -329,9 +329,9 @@ class FormularioCliente(models.Model):
 
                             self.areas_asociadas_sede |= bom_created.bom_line_ids
 
-                    for linea_bom in self.areas_asociadas_sede:
-                        linea_bom.product_qty = 1
-                        linea_bom.cantidad_final = 1
+                        for linea_bom in self.areas_asociadas_sede:
+                            linea_bom.product_qty = 1
+                            linea_bom.cantidad_final = 1
 
             else:
                 self.sede_seleccionada = self._origin.sede_seleccionada

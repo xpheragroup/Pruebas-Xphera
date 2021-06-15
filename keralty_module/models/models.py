@@ -226,38 +226,38 @@ class FormularioCliente(models.Model):
         else:
             categoria_consul_requer = existe_categoria
 
-        # Validar si producto existe
-        # verificar consulta de la secuencia por el modelo.
-        #siguiente_codigo_secuencia = self.env['ir.sequence'].next_by_code('keralty_module.formulario.cliente')
-        siguiente_codigo_secuencia = self.env['keralty_module.formulario.cliente'].search([], order='id ASC')[-1].id + 1
-
-        existe_producto = self.env['product.template'].search([('name', '=', 'Formulario Cliente (' + str(siguiente_codigo_secuencia) + ')' )])
-        
-        # Create Template Product
-        if not existe_producto:
-            product_template = self.env['product.template'].create({
-                'name': 'Formulario Cliente (' + str(siguiente_codigo_secuencia) + ')',
-                'purchase_ok': False,
-                'type': 'product',
-                'categ_id': categoria_consul_requer.id,
-                'company_id': company_id.id,
-                'route_ids': [(6, 0, [route_manufacture, route_mto])]
-            })
-            # Create BOM
-            bom_created = self.env['mrp.bom'].create({
-                'product_tmpl_id': product_template.id,
-                'product_qty': 1.0,
-                'type': 'normal',
-            })
-        else:
-            product_template = existe_producto
-            # validar el bom seleccionado
-            bom_created = existe_producto.bom_ids[0]
-
-        ldm_producto_nuevo = bom_created
-
-
         if not self._origin:
+
+            # Validar si producto existe
+            # verificar consulta de la secuencia por el modelo.
+            #siguiente_codigo_secuencia = self.env['ir.sequence'].next_by_code('keralty_module.formulario.cliente')
+            siguiente_codigo_secuencia = self.env['keralty_module.formulario.cliente'].search([], order='id ASC')[-1].id + 1
+
+            existe_producto = self.env['product.template'].search([('name', '=', 'Formulario Cliente (' + str(siguiente_codigo_secuencia) + ')' )])
+            
+            # Create Template Product
+            if not existe_producto:
+                product_template = self.env['product.template'].create({
+                    'name': 'Formulario Cliente (' + str(siguiente_codigo_secuencia) + ')',
+                    'purchase_ok': False,
+                    'type': 'product',
+                    'categ_id': categoria_consul_requer.id,
+                    'company_id': company_id.id,
+                    'route_ids': [(6, 0, [route_manufacture, route_mto])]
+                })
+                # Create BOM
+                bom_created = self.env['mrp.bom'].create({
+                    'product_tmpl_id': product_template.id,
+                    'product_qty': 1.0,
+                    'type': 'normal',
+                })
+            else:
+                product_template = existe_producto
+                # validar el bom seleccionado
+                bom_created = existe_producto.bom_ids[0]
+
+            self.ldm_producto_nuevo = bom_created
+
             total_bom_line_ids = None
 
             for sede_product_template in self.sede_seleccionada:
@@ -329,10 +329,10 @@ class FormularioCliente(models.Model):
                                 #linea_bom_copy.company_id = self.id
                                 linea_bom_copy.product_qty = 1
                                 linea_bom_copy.cantidad_final = 1
-                                linea_bom_copy.bom_id = bom_created.id
+                                linea_bom_copy.bom_id = self.ldm_producto_nuevo.id
 
 
-                            self.areas_asociadas_sede |= bom_created.bom_line_ids
+                            self.areas_asociadas_sede |= self.ldm_producto_nuevo.bom_line_ids
 
 
             else:

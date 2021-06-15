@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_keralty_module_formulario_cliente,keralty_module.formulario.cliente,model_keralty_module_formulario_cliente,base.group_user,1,1,1,0
+access_keralty_module_formulario_cliente_admin,keralty_module.formulario.cliente,model_keralty_module_formulario_cliente,mrp.group_mrp_user,1,1,1,1
+access_keralty_module_formulario_validacion,keralty_module.formulario.valdiacion,model_keralty_module_formulario_validacion,mrp.group_mrp_user,1,1,1,1
+access_keralty_module_categoria,keralty_module.categoria,model_keralty_module_categoria,mrp.group_mrp_user,1,1,1,1
+access_keralty_module_sede,keralty_module.sede,model_keralty_module_sede,mrp.group_mrp_user,1,1,1,1
+access_keralty_module_calculos,keralty_module.calculos,model_keralty_module_calculos,mrp.group_mrp_user,1,1,1,1

@@ -1,0 +1,581 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition
+    <record model="ir.ui.view" id="keralty_module.list">
+      <field name="name">Formulario Params list</field>
+      <field name="model">keralty_module.formulario.param</field>
+      <field name="arch" type="xml">
+        <tree string="Información general">
+          <field name="nombre_codigo" placeholder="Nombre o Código"/>
+          <field name="banios_hombres" placeholder="Área de casilleros para funcionarios"/>
+        </tree>
+      </field>
+    </record>-->
+      <!-- Vista de lista para FORMULARIO CLIENTE -->
+    <record model="ir.ui.view" id="keralty_module.form_cliente_list">
+      <field name="name">Formulario Params list</field>
+      <field name="model">keralty_module.formulario.cliente</field>
+      <field name="arch" type="xml">
+        <tree string="Información general">
+          <field name="nombre_proyecto" placeholder="Nombre Proyecto" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- actions opening views on models
+    <record model="ir.actions.act_window" id="keralty_module.action_window">
+      <field name="name">Parametrización</field>
+      <field name="res_model">keralty_module.formulario.param</field>
+      <field name="view_mode">tree,pivot,graph,form,kanban</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ninguna parametrización creada hasta el momento.
+          </p>
+      </field>
+    </record>-->
+
+    <!-- FORMULARIO CLIENTE -->
+    <record model="ir.actions.act_window" id="keralty_module.form_cliente_action_window">
+      <field name="name">Formulario Cliente</field>
+      <field name="res_model">keralty_module.formulario.cliente</field>
+      <field name="view_mode">tree,pivot,graph,form,kanban</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ningún formulario o proyecto de cliente creado aún.
+          </p>
+      </field>
+    </record>
+
+    <!-- FORMULARIO VALIDACIÓN -->
+    <record model="ir.actions.act_window" id="keralty_module.form_validacion_action_window">
+      <field name="name">Formulario Validación</field>
+      <field name="res_model">keralty_module.formulario.validacion</field>
+      <field name="view_mode">tree,pivot,graph,form,kanban</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ningún formulario de validación creado aún.
+          </p>
+      </field>
+    </record>
+    <!-- GESTIÓN CATEGORÍAS -->
+    <record model="ir.actions.act_window" id="keralty_module.categoria_action_window">
+      <field name="name">Gestión Categorías</field>
+      <field name="res_model">keralty_module.categoria</field>
+      <field name="view_mode">tree,pivot,graph,form,kanban</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ninguna Categoría creada.
+          </p>
+      </field>
+    </record>
+    <!-- GESTIÓN ÁREAS -->
+    <record model="ir.actions.act_window" id="keralty_module.areas_action_window">
+      <field name="name">Gestión Áreas</field>
+      <field name="res_model">product.template</field>
+      <field name="view_mode">tree,pivot,graph,form,kanban</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ninguna Área creada.
+          </p>
+      </field>
+    </record>
+    <!-- GESTIÓN Clientes -->
+    <record model="ir.actions.act_window" id="keralty_module.clientes_action_window">
+      <field name="name">Gestión Clientes</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">kanban,form</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ningún Cliente creado.
+          </p>
+      </field>
+    </record>
+    <!-- GESTIÓN Sedes -->
+    <record model="ir.actions.act_window" id="keralty_module.sedes_action_window">
+      <field name="name">Gestión Sedes</field>
+      <field name="res_model">keralty_module.sede</field>
+      <field name="view_mode">kanban,form</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ninguna Sede creada.
+          </p>
+      </field>
+    </record>
+    <!-- GESTIÓN Cálculos -->
+    <record model="ir.actions.act_window" id="keralty_module.calculos_action_window">
+      <field name="name">Parametrización de Cálculos</field>
+      <field name="res_model">keralty_module.calculos</field>
+      <field name="view_mode">kanban,form</field>
+      <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              No hay ningún Cálculo parametrizado.
+          </p>
+      </field>
+    </record>
+
+    <!-- server action to the one above
+    <record model="ir.actions.server" id="keralty_module.action_server">
+      <field name="name">keralty_module server</field>
+      <field name="model_id" ref="model_keralty_module_formulario_param"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": formulario.param._name,
+        }
+      </field>
+    </record>-->
+
+    <!-- VISTAS DE FORMULARIO -->
+
+    <!-- FORMULARIO PARAMETRIZACIONES PERSONALIZADO
+    <record id="keralty_formulario_param_form" model="ir.ui.view">
+        <field name="name">Formulario Parametrización</field>
+        <field name="model">keralty_module.formulario.param</field>
+        <field name="arch" type="xml">
+            <form string="Formulario de Parametricos" class="o_purchase_order">
+            <header>
+                <button name="print_quotation" string="Paso 1" type="object" class="oe_highlight" groups="base.group_user"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button type="object"  name="action_view_invoice"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o">
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <img src="/keralty_module/static/src/img/keralty_logo.svg" width="150px" height="100px"/>
+                     <span class="o_form_label">Título Formulario Parametrización </span>
+                    <h1><field name="nombre_codigo" class="oe_inline" placeholder="Nombre o Código"/></h1>
+                </div>
+                <group>
+                    <group string="Cantidad de Consultorios para cada área">
+                        <span class="o_form_label">Ingrese la cantidad de Consultorios para la creación de cada área derivada a continuación:</span>
+                        <field name="casilleros"/>
+                        <field name="banios_hombres"/>
+                        <field name="banios_mujeres"/>
+                        <field name="banios_hombres_disc"/>
+                        <field name="banios_mujeres_disc"/>
+                        <field name="cafeteria_empleados"/>
+                        <field name="cuarto_aseo"/>
+                        <field name="banios_hombres_emp"/>
+                        <field name="banios_mujeres_emp"/>
+                    </group>
+                    <group string="Cantidad de Laboratorios para cada área">
+                        <span class="o_form_label">Ingrese la cantidad de Laboratorios para la creación de cada área derivada a continuación:</span>
+                        <field name="banios_hombres_lab"/>
+                        <field name="banios_mujeres_lab"/>
+                        <field name="banios_hombres_lab_disc"/>
+                        <field name="banios_mujeres_lab_disc"/>
+                        <field name="banio_mixto"/>
+                        <field name="vestier"/>
+                        <field name="oficina_admon"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Inicial">
+                    </page>
+                    <page string="Secundario Test" name="purchase_delivery_invoice">
+                        <group>
+                            <group name="planning">
+                                <span class="o_form_label">Info</span>
+                            </group>
+                            <group name="other_info">
+                                <span class="o_form_label">Otra info</span>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+            <div class="oe_chatter">
+                <span class="o_form_label">oe_chatter</span>
+            </div>
+            </form>
+        </field>
+    </record> -->
+
+
+    <!-- FORMULARIO CLIENTES -->
+    <record id="keralty_formulario_cliente_form" model="ir.ui.view">
+        <field name="name">Formulario Clientes</field>
+        <field name="model">keralty_module.formulario.cliente</field>
+        <field name="arch" type="xml">
+            <form string="Formulario Cliente" class="o_purchase_order">
+                <header>
+                    <!--button name="action_validar_proyecto" string="Validar Datos" type="object" class="oe_highlight" groups="base.group_user"/-->
+                    <button name="action_confirmar_proyecto" string="Confirmar Proyecto" type="object" class="oe_highlight rounded-pill"
+                        confirm="Esta opción es irreversible y deshabilitará la edición del formulario. ¿Desea continuar?" groups="base.group_user" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancel"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <field name="imagen_empresa_html" widget="html"/>
+                        <h1><field name="nombre_proyecto" class="oe_inline" placeholder="Nombre Proyecto" attrs="{'readonly':[('state','!=','draft')]}"/></h1>
+                    </div>
+                    <group string="Identificación del proyecto">
+                        <span class="oe_inline">Seleccione la información que se presenta a continuación:</span>
+                        <br/>
+                        <field name="empresa_seleccionada" string="Selección de Empresa(s)" widget="many2many_tags"/>
+                        <field name="producto_seleccionado" string="Selección de Producto(s)" widget="many2many_tags"/>
+                        <field name="sede_seleccionada" string="Selección de Sedes(s)" widget="many2many_tags"/>
+                        <field name="tipo_intervencion" />
+                    </group>
+                    <group string="Ubicación geográfica">
+                        <br/>
+                        <field name="pais" />
+                        <field name="departamento" />
+                        <field name="ciudad" />
+                        <field name="poligono" />
+                        <field name="especificaciones_adicionales" />
+                    </group>
+                    <group string="Ocupación">
+                        <span style="width: 100%;">Por favor diligencie la distribución de ocupación para cada una de las categorías.</span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <h3>Usuarios <i class="fa fa-child"></i></h3>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <span class="oe_inline"><b>Distribución por género</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="usuarios_femenino" />
+                        <field name="usuarios_masculino" />
+                        <span class="oe_inline"><b>Distribución por grupo etario</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="usuarios_menores_10_anos" />
+                        <field name="usuarios_entre_10_19_anos" />
+                        <field name="usuarios_entre_20_59_anos" />
+                        <field name="usuarios_mayores_59_anos" />
+                        <br/>
+                        <br/>
+                        <h3>Empleados <i class="fa fa-user"></i></h3>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <span class="oe_inline"><b>Distribución por género</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="empleados_femenino" />
+                        <field name="empleados_masculino" />
+                        <span class="oe_inline"><b>Distribución por tipo de labor</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="personal_administrativo" />
+                        <field name="personal_asistencial" />
+                        <br/>
+                        <br/>
+                        <h3>Terceros <i class="fa fa-users"></i></h3>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <span class="oe_inline"><b>Distribución por género</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="terceros_femenino" />
+                        <field name="terceros_masculino" />
+                        <span class="oe_inline"><b>Distribución por servicios a subcontratar</b></span>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <field name="servicios_generales" />
+                        <field name="seguridad" />
+
+                    </group>
+                    <notebook>
+                        <!--<templates>-->
+                            <!--<t t-foreach="empresa_seleccionada" t-as="empresa">-->
+                                <page class="oe_highlight icono_areas_cliente" string="Áreas Cliente" name="Áreas Cliente" icon="fa-id-card-o">
+                                    <span style="width: 100%;"><b>Selección de áreas</b></span>
+                                    <br />
+                                    <span style="width: 100%;">A continuación encontrará la información de las áreas sugeridas para la iniciativa solicitada. En caso de contar con proyecciones de crecimiento de infraestructura, ingrese en “Valor Inicial” la cantidad de espacios por cada área con la que iniciará la operación del proyecto, y en “Valor Final”, la cantidad total proyectada en cada caso. Si no se proyectará crecimiento, ingrese la cantidad de espacios a solicitar únicamente en la columna “Valor Inicial”</span>
+                                    <group class="invoice-residual-view">
+                                        <!--field name="move_raw_ids"/-->
+                                        <field string="" name="areas_asociadas_sede" widget="many2many">
+                                            <tree string="Áreas" editable="top" create="true" edit="false">
+                                                <field name="company_id" invisible="1"/>
+                                                <field width="10%"  name="product_image" options="{'size':[0,90]}" widget="image"/>
+                                                <field width="300px"  name="product_id" string="Área"  invisible="1"/>
+                                                <field width="50%"  name="product_name_only" string="Área"/>
+                                                <field width="20%" string="Cantidad Inicial" name="product_qty" />
+                                                <field width="20%" name="cantidad_final" />
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                            <!--</t>-->
+                        <!--</templates>-->
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- FORMULARIO PARAMETRIZACIÓN CÁLCULOS -->
+    <record id="keralty_formulario_calculos_form" model="ir.ui.view">
+        <field name="name">Formulario de Cálculos</field>
+        <field name="model">keralty_module.calculos</field>
+        <field name="arch" type="xml">
+            <form string="Formulario de Cálculos" class="o_purchase_order">
+            <sheet>
+                <div class="oe_title">
+                    <img src="/keralty_module/static/src/img/keralty_logo.svg" width="150px" height="100px" alt="Logo Keralty"/>
+                    <br/>
+                    <span class="o_form_label">Ingrese la información solicitada para la creación de una nueva regla de cálculo:</span>
+                </div>
+                <group string="Datos de Formulación">
+                    <group>
+                        <field name="empresa"/>
+                        <field name="area_derivada"/>
+                        <field name="variable_derivada" required="True"/>
+                    </group>
+                    <group>
+                        <field name="fuente_criterio" required="True"/>
+                        <field name="area_criterio_independiente" attrs="{'readonly':['|',('fuente_criterio', '=', 'predeterminado'), ('campo_criterio_independiente', '!=', False)]}"/>
+                            <field name="campo_criterio_independiente" attrs="{'readonly':['|',('fuente_criterio', '=', 'predeterminado'), ('area_criterio_independiente', '!=', False)]}"/>
+                            <field name="variable_criterio" attrs="{'readonly':[('fuente_criterio', '=', 'predeterminado')]}"/>
+                            <field name="formula_aritmetica"/>
+                    </group>
+                </group>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- FORMULARIO DE VALIDACIÓN TÉCNICA -->
+    <record id="keralty_formulario_validacion_form" model="ir.ui.view">
+        <field name="name">Formulario de Validación Técnica</field>
+        <field name="model">keralty_module.formulario.validacion</field>
+        <field name="arch" type="xml">
+            <form string="Formulario de Validación Técnica" class="o_purchase_order">
+                <header>
+                    <button name="action_calcular_areas" string="Calcular Áreas" type="object" class="oe_highlight rounded-pill"
+                        confirm="Realizando el cálculo de áreas." groups="base.group_user" />
+                    <button name="action_realizar" string="Marcar Realizado Inicial" type="object" class="oe_highlight rounded-pill"
+                        confirm="Esta opción es irreversible y deshabilitará la edición del formulario. ¿Desea continuar?" groups="base.group_user" />
+                    <button name="action_realizar_final" string="Marcar Realizado Final" type="object" class="oe_highlight rounded-pill"
+                        confirm="Esta opción es irreversible y deshabilitará la edición del formulario. ¿Desea continuar?" groups="base.group_user" />
+                    <button name="action_producir" string="Generar Órdenes Iniciales" type="object" class="oe_highlight rounded-pill"
+                        confirm="Esta opción es irreversible y deshabilitará la edición del formulario. ¿Desea continuar?" groups="base.group_user" />
+                    <button name="action_producir_final" string="Generar Órdenes Finales" type="object" class="oe_highlight rounded-pill"
+                        confirm="Esta opción es irreversible y deshabilitará la edición del formulario. ¿Desea continuar?" groups="base.group_user" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancel"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <field name="imagen_empresa_html" widget="html"/>
+                        <h2><field name="nombre_tecnico" class="oe_inline" placeholder="Código Revisión" attrs="{'readonly':[('state','!=','draft')]}"/></h2>
+                        <br/>
+                        <span class="o_form_label">Ingrese la información solicitada para realizar la validación técnica de un proyecto:</span>
+                    </div>
+                    <group string="Datos del proyecto">
+                        <group>
+                            <field name="formulario_cliente" ></field>
+                        </group>
+                        <group>
+
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page class="oe_highlight icono_areas_cliente" string="Áreas Cliente" name="Áreas Cliente" icon="fa-id-card-o">
+                            <group class="invoice-residual-view">
+                                <field name="areas_cliente" widget="many2many">
+                                    <tree string="Áreas" editable="top">
+                                        <field name="company_id" invisible="1"/>
+                                        <field width="300px" name="product_id" string="Área"  invisible="1"/>
+                                        <field width="300px" name="product_name_only" string="Área"/>
+                                        <field string="Cantidad Inicial" name="product_qty" />
+                                        <field name="cantidad_final" />
+                                        <field name="m2" />
+                                        <field name="total_m2" sum="Total" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page class="oe_highlight icono_areas_derivadas" string="Áreas Derivadas" name="Áreas Derivadas" icon="fa-id-card-o">
+                            <group class="invoice-residual-view">
+                                <field name="areas_derivadas" widget="many2many">
+                                    <tree string="Áreas" editable="top">
+                                        <field name="company_id" invisible="1"/>
+                                        <field width="300px"  name="product_tmpl_id" string="Área"  invisible="1"/>
+                                        <field width="300px"  name="product_name_only" string="Área"/>
+                                        <field string="Cantidad Inicial" name="product_qty" />
+                                        <field name="cantidad_final" />
+                                        <field name="m2" />
+                                        <field name="total_m2" sum="Total" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page class="oe_highlight icono_areas_diseno" string="Áreas Diseño" name="Áreas Diseño" icon="fa-id-card-o">
+                            <group class="invoice-residual-view">
+                                <field name="areas_diseño" widget="many2many">
+                                    <tree string="Áreas" editable="top">
+                                        <field name="company_id" invisible="1"/>
+                                        <field width="300px"  name="product_tmpl_id" string="Área"  invisible="1"/>
+                                        <field width="300px"  name="product_name_only" string="Área"/>
+                                        <field string="Cantidad Inicial" name="product_qty" />
+                                        <field name="cantidad_final" />
+                                        <field name="m2" />
+                                        <field name="total_m2" sum="Total" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page class="oe_highlight icono_areas_total" string="Total" name="Total" icon="fa-id-card-o">
+                            <group class="">
+                                <group class="">
+                                    <field name="porcentaje_pasillos" />
+                                    <field name="total_m2_areas_cliente" />
+                                    <field name="total_m2_areas_derivadas" />
+                                    <field name="total_m2_areas_diseno" />
+                                    <field name="total_m2_areas" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Modificación al atributo string del botón CANCELAR  de Cancel a Realizar -->
+    <record id="mrp_production_form_view_inherited_button" model="ir.ui.view">
+        <field name="name">mrp.production.view.inherited.button</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                  <attribute name="string">Realizar</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button name="action_cancel_all" type="object" string="Realizar Todo"
+                    confirm="Esta opción es irreversible y marcará todas las órdenes de producción como canceladas/realizadas. ¿Desea continuar?"
+                    attrs="{'invisible': ['|', '|', '|', ('id', '=', False), ('is_locked', '=', False), ('state', 'in', ('done','cancel')), ('confirm_cancel', '=', True)]}"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Modificación a la vista purchase_order_tree solicitud de cotización -->
+    <record id="purchase_order_tree_inherit_field_proyecto" model="ir.ui.view">
+        <field name="name">purchase.order.view.inherited.field.proyecto</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree" />
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='date_order']" position="after">
+            <field name="nombre_proyecto"/>
+          </xpath>
+          <xpath expr="//field[@name='origin']" position="replace"/>
+        </field>
+    </record>
+    <!-- Modificación a la vista purchase_order_view_tree orden de compra -->
+    <record id="purchase_order_tree_inherit_field_proyecto_asociado" model="ir.ui.view">
+        <field name="name">purchase.order.view.inherited.field.proyecto_asociado</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree" />
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='date_approve']" position="after">
+            <field name="nombre_proyecto"/>
+          </xpath>
+          <xpath expr="//field[@name='origin']" position="replace"/>
+        </field>
+    </record>
+
+    <!-- Modificación a la vista base.view_partner_form información cliente. -->
+    <record id="view_partner_form_company_id" model="ir.ui.view">
+        <field name="name">view.partner.form.company_id</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='misc']/field[@name='company_id']" position="attributes">
+                <attribute name="groups"></attribute>
+                <attribute name="invisible">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Modificación formulario product.template campo Adjuntar -->
+    <record id="product_template_only_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.form.inherited.adjuntar</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="adjunto" />
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="groups"></attribute>
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="replace">
+                <field name="company_id" required="True"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_normal_form_view" model="ir.ui.view">
+        <field name="name">product.product.form.inherited.require_pay</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="replace">
+                <field name="company_id" required="True"/>
+            </xpath>
+        </field>
+    </record>
+
+<!--
+    <record id="keralty_formulario_calculos_kanban" model="ir.ui.view">
+        <field name="name">Formulario de Cálculos Kanban</field>
+        <field name="model">keralty_module.calculos</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="empresa" >
+                <field display="full" name="display_name"/>
+                <field name="area_derivada"/>
+                <field name="variable_derivada"/>
+            </kanban>
+        </field>
+    </record>
+-->
+    <!-- Top menu item -->
+    <menuitem name="Keralty" id="keralty_module.menu_root"
+        web_icon="keralty_module,static/description/logo.png"/>
+    <!-- menu categories -->
+    <!-- menuitem name="Parametrización" id="keralty_module.menu_1" parent="keralty_module.menu_root"/-->
+    <menuitem name="Formulario Clientes" id="keralty_module.menu_2" parent="keralty_module.menu_root"/>
+    <menuitem name="Formulario Validación" id="keralty_module.menu_3" parent="keralty_module.menu_root"/>
+    <menuitem name="Gestión" id="keralty_module.menu_4" parent="keralty_module.menu_root" groups="mrp.group_mrp_user"/>
+    <menuitem name="Configuración" id="keralty_module.menu_5" parent="keralty_module.menu_root"/>
+    <!-- actions -->
+    <!--menuitem name="Lista de Parametrizaciones" id="keralty_module.menu_1_list" parent="keralty_module.menu_1"
+              action="keralty_module.action_window"/-->
+    <menuitem name="Lista de Formularios Clientes" id="keralty_module.menu_2_list" parent="keralty_module.menu_2"
+              action="keralty_module.form_cliente_action_window"/>
+    <menuitem name="Lista de Formularios de Validación" id="keralty_module.menu_3_list" parent="keralty_module.menu_3"
+              action="keralty_module.form_validacion_action_window"/>
+    <menuitem name="Lista de Áreas" id="keralty_module.menu_4_list" parent="keralty_module.menu_4"
+              action="keralty_module.areas_action_window"/>
+    <menuitem name="Lista de Clientes" id="keralty_module.menu_5_list" parent="keralty_module.menu_4"
+              action="keralty_module.clientes_action_window"/>
+    <menuitem name="Lista de Sedes" id="keralty_module.menu_6_list" parent="keralty_module.menu_4"
+              action="keralty_module.sedes_action_window"/>
+    <menuitem name="Parametrización de Cálculos" id="keralty_module.menu_calculos_list" parent="keralty_module.menu_5"
+              action="keralty_module.calculos_action_window"/>
+      <!--menuitem name="Lista de Ejemplo" id="keralty_module.menu_ejemplo" parent="keralty_module.menu_4"
+              action="keralty_module.categoria_action_window"/-->
+  </data>
+</odoo>

@@ -278,7 +278,7 @@ class FormularioCliente(models.Model):
                     for linea_bom in total_bom_line_ids:
                         # validar que no se repita la copia de las líneas de materiales
                         linea_bom_copy = linea_bom.copy()
-                        linea_bom_copy.company_id = self.id
+                        #linea_bom_copy.company_id = self.id
                         linea_bom_copy.bom_id = bom_created.id
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
@@ -317,14 +317,21 @@ class FormularioCliente(models.Model):
                                                     total_bom_line_ids += linea_bom
                                                 else:
                                                     total_bom_line_ids = linea_bom
-                            area.bom_line_ids = None
-                            area.bom_line_ids = total_bom_line_ids
+                            
 
-                            for linea_bom in area.bom_line_ids:
-                                linea_bom.product_qty = 1
-                                linea_bom.cantidad_final = 1
+                            # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.
+                            for linea_bom in total_bom_line_ids:
+                                # validar que no se repita la copia de las líneas de materiales
+                                linea_bom_copy = linea_bom.copy()
+                                #linea_bom_copy.company_id = self.id
+                                linea_bom_copy.bom_id = bom_created.id
 
-                            self.areas_asociadas_sede |= area.bom_line_ids
+                            self.areas_asociadas_sede |= bom_created.bom_line_ids
+                            
+                    for linea_bom in self.areas_asociadas_sede:
+                        linea_bom.product_qty = 1
+                        linea_bom.cantidad_final = 1
+
             else:
                 self.sede_seleccionada = self._origin.sede_seleccionada
 

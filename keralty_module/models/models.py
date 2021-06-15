@@ -229,7 +229,7 @@ class FormularioCliente(models.Model):
         # Validar si producto existe
         # verificar consulta de la secuencia por el modelo.
         #siguiente_codigo_secuencia = self.env['ir.sequence'].next_by_code('keralty_module.formulario.cliente')
-        siguiente_codigo_secuencia = self.env['keralty_module.formulario.cliente'].search([], order='sequence ASC')[-1].sequence + 1
+        siguiente_codigo_secuencia = self.env['keralty_module.formulario.cliente'].search([], order='id ASC')[-1].id + 1
 
         existe_producto = self.env['product.template'].search([('name', '=', 'Formulario Cliente (' + str(siguiente_codigo_secuencia) + ')' )])
         

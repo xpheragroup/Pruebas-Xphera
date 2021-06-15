@@ -322,6 +322,8 @@ class FormularioCliente(models.Model):
 
                             # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.
                             for linea_bom in total_bom_line_ids:
+                                linea_bom.product_qty = 1
+                                linea_bom.cantidad_final = 1
                                 # validar que no se repita la copia de las líneas de materiales
                                 linea_bom_copy = linea_bom.copy()
                                 #linea_bom_copy.company_id = self.id

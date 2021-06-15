@@ -62,6 +62,10 @@ class FormularioCliente(models.Model):
                     domain="[('product_tmpl_id','=',sede_seleccionada)]",
                     required=True,
                     readonly=True, states={'draft': [('readonly', False)]},)
+    ldm_producto_nuevo = fields.Many2many(string="Producto nuevo creado para proyecto.",
+                    comodel_name='mrp.bom',
+                    relation="bom_cliente_producto_nuevo",
+                    readonly=True, states={'draft': [('readonly', False)]},)
     # TODO: encontrar el filtro necesario por cada una de las variantes E,mpresa y Producto, por lo pronto se dejan solamente las SEDES.
     # TODO: Al momento de editar cada línea no afecte la cantidad preconfigurada
     areas_asociadas_sede = fields.Many2many(string="Selección de Áreas",
@@ -207,6 +211,51 @@ class FormularioCliente(models.Model):
     '''
     @api.onchange('sede_seleccionada')
     def _onchange_sede_seleccionada(self):
+
+        company_id = self.env.company
+        warehouse = self.env.ref('stock.warehouse0')
+        route_manufacture = warehouse.manufacture_pull_id.route_id.id
+        route_mto = warehouse.mto_pull_id.route_id.id
+
+        # Create Category
+        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Cliente'.title())])
+        if not existe_categoria:
+            categoria_consul_requer = self.env['product.category'].create({
+                'name': 'Formularios Cliente'.title(),
+            })
+        else:
+            categoria_consul_requer = existe_categoria
+
+        # Validar si producto existe
+        # verificar consulta de la secuencia por el modelo.
+        siguiente_codigo_secuencia = self.env['ir.sequence'].next_by_code('keralty_module.formulario.cliente')
+
+        existe_producto = self.env['product.template'].search([('name', '=', 'Formulario Cliente (' + siguiente_codigo_secuencia + ')' )])
+        
+        # Create Template Product
+        if not existe_producto:
+            product_template = self.env['product.template'].create({
+                'name': 'Formulario Cliente (' + siguiente_codigo_secuencia + ')',
+                'purchase_ok': False,
+                'type': 'product',
+                'categ_id': categoria_consul_requer.id,
+                'company_id': company_id.id,
+                'route_ids': [(6, 0, [route_manufacture, route_mto])]
+            })
+            # Create BOM
+            bom_created = self.env['mrp.bom'].create({
+                'product_tmpl_id': product_template.id,
+                'product_qty': 1.0,
+                'type': 'normal',
+            })
+        else:
+            product_template = existe_producto
+            # validar el bom seleccionado
+            bom_created = existe_producto.bom_ids[0]
+
+        ldm_producto_nuevo = bom_created
+
+
         if not self._origin:
             total_bom_line_ids = None
 
@@ -224,10 +273,15 @@ class FormularioCliente(models.Model):
                                             total_bom_line_ids += linea_bom
                                         else:
                                             total_bom_line_ids = linea_bom
-                    area.bom_line_ids = None
-                    area.bom_line_ids = total_bom_line_ids
 
-                    self.areas_asociadas_sede |= area.bom_line_ids
+                    # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.
+                    for linea_bom in total_bom_line_ids:
+                        # validar que no se repita la copia de las líneas de materiales
+                        linea_bom_copy = linea_bom.copy()
+                        linea_bom_copy.company_id = self.id
+                        linea_bom_copy.bom_id = bom_created.id
+
+                    self.areas_asociadas_sede |= bom_created.bom_line_ids
 
                     if not total_bom_line_ids:
                         raise exceptions.UserError("No se encuentra ninguna asociación entre el Producto y la Sede seleccionados.")

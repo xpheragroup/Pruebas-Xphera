@@ -285,7 +285,7 @@ class FormularioCliente(models.Model):
                     #bom_created.bom_line_ids = None
                     for linea_bom_existente in bom_created.bom_line_ids:
                         for linea_bom in total_bom_line_ids:
-                            if linea_bom.display_name == linea_bom_existente.display_name:
+                            if linea_bom.product_id == linea_bom_existente.product_id:
                                 break
                             else:
                                 # validar que no se repita la copia de las líneas de materiales

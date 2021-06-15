@@ -264,9 +264,9 @@ class FormularioCliente(models.Model):
             self.ldm_producto_nuevo = bom_created
 
             total_bom_line_ids = None
-            
-            for line_existente in bom_created.bom_line_ids:
-                line_existente.unlink()
+
+            # for line_existente in bom_created.bom_line_ids:
+            #     line_existente.unlink()
 
             for sede_product_template in self.sede_seleccionada:
                 for area in sede_product_template.bom_ids:
@@ -282,7 +282,7 @@ class FormularioCliente(models.Model):
                                             total_bom_line_ids += linea_bom
                                         else:
                                             total_bom_line_ids = linea_bom
-
+                    total_bom_line_ids = total_bom_line_ids - bom_created.bom_line_ids
                     # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.
                     for linea_bom in total_bom_line_ids:
                         # validar que no se repita la copia de las líneas de materiales

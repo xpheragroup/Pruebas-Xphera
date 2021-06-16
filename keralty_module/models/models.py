@@ -441,7 +441,9 @@ class FormularioCliente(models.Model):
             linea_bom_copy = linea_bom.copy()
             linea_bom_copy.bom_id = bom_created.id
 
-        default = dict(default or {}, ldm_producto_nuevo=bom_created)
+        nombre_proyecto_copy = self.nombre_proyecto + ' (copy)'
+
+        default = dict(default or {}, ldm_producto_nuevo=bom_created, nombre_proyecto=nombre_proyecto_copy
         return super(FormularioCliente, self).copy(default)
 
 # crear campo nombre_proyecto en ordenes de compra por proveedor

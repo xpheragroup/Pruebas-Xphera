@@ -284,7 +284,7 @@ class FormularioCliente(models.Model):
                                             total_bom_line_ids = linea_bom
 
 
-                    lineas_consultadas_names = {record.name for record in total_bom_line_ids}
+                    # lineas_consultadas_names = {record.name for record in total_bom_line_ids}
                     lineas_existentes_names = {record.product_id.name for record in bom_created.bom_line_ids}
 
                     # for lineas_existentes in bom_created.bom_line_ids:

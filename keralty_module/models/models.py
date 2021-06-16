@@ -334,7 +334,7 @@ class FormularioCliente(models.Model):
                                                     total_bom_line_ids = linea_bom
                             
 
-                            lineas_existentes_names = {record.product_tmpl_id.name for record in self.ldm_producto_nuevo.bom_line_ids}
+                            lineas_existentes_names = {record.product_tmpl_id.name for record in self._origin.ldm_producto_nuevo.bom_line_ids}
 
                             # for lineas_existentes in bom_created.bom_line_ids:
                             for lineas_consultadas in total_bom_line_ids:
@@ -343,9 +343,9 @@ class FormularioCliente(models.Model):
                                 else:
                                     linea_bom_copy = lineas_consultadas.copy()
                                     #linea_bom_copy.company_id = self.id
-                                    linea_bom_copy.bom_id = self.ldm_producto_nuevo.id
+                                    linea_bom_copy.bom_id = self._origin.ldm_producto_nuevo.id
 
-                            self.areas_asociadas_sede |= self.ldm_producto_nuevo.bom_line_ids
+                            self.areas_asociadas_sede |= self._origin.ldm_producto_nuevo.bom_line_ids
 
 
             else:

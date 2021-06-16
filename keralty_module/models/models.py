@@ -343,7 +343,7 @@ class FormularioCliente(models.Model):
                                 else:
                                     linea_bom_copy = linea_bom.copy()
                                     #linea_bom_copy.company_id = self.id
-                                    linea_bom_copy.bom_id = bom_created.id
+                                    linea_bom_copy.bom_id = self.ldm_producto_nuevo.id
 
                             self.areas_asociadas_sede |= self.ldm_producto_nuevo.bom_line_ids
 

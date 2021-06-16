@@ -304,8 +304,9 @@ class FormularioCliente(models.Model):
                         lineas_sobrantes = self.areas_asociadas_sede - bom_created.bom_line_ids
 
                         for linea_sobrante in lineas_sobrantes:
-                            linea_sobrante.unlink()
-                            
+                            # linea_sobrante.unlink()
+                            linea_sobrante.bom_id = False
+
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
 
                     if not total_bom_line_ids:

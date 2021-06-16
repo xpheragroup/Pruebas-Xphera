@@ -285,11 +285,11 @@ class FormularioCliente(models.Model):
 
 
                     # lineas_consultadas_names = {record.name for record in total_bom_line_ids}
-                    lineas_existentes_names = {record.product_id.name for record in bom_created.bom_line_ids}
+                    lineas_existentes_names = {record.product_tmpl_id.name for record in bom_created.bom_line_ids}
 
                     # for lineas_existentes in bom_created.bom_line_ids:
                     for lineas_consultadas in total_bom_line_ids:
-                        if lineas_consultadas.product_id.name in lineas_existentes_names:
+                        if lineas_consultadas.product_tmpl_id.name in lineas_existentes_names:
                             continue
                         else:
                     # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.

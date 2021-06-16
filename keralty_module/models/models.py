@@ -403,6 +403,16 @@ class FormularioCliente(models.Model):
 
         # _logger.critical("Confirmar proyecto")
         return True
+
+    def copy(self, default=None):
+        self.ensure_one()
+
+        chosen_formulario = default.get('ldm_producto_nuevo') if default else ''
+        new_formulario = chosen_formulario.copy()# or _('%s (copy)') % self.name
+        
+        default = dict(default or {}, ldm_producto_nuevo=new_formulario)
+        return super(FormularioCliente, self).copy(default)
+
 # crear campo nombre_proyecto en ordenes de compra por proveedor
 
 class PurchaseOrder(models.Model):

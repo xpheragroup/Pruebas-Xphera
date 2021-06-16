@@ -292,8 +292,11 @@ class FormularioCliente(models.Model):
                         if lineas_consultadas.product_tmpl_id.name in lineas_existentes_names:
                             continue
                         else:
+                            lineas_consultadas.product_qty = 1
+                            lineas_consultadas.cantidad_final = 1
                             linea_bom_copy = lineas_consultadas.copy()
-                            #linea_bom_copy.company_id = self.id
+                            linea_bom_copy.product_qty = 1
+                            linea_bom_copy.cantidad_final = 1                            
                             linea_bom_copy.bom_id = bom_created.id
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
@@ -301,9 +304,9 @@ class FormularioCliente(models.Model):
                     if not total_bom_line_ids:
                         raise exceptions.UserError("No se encuentra ninguna asociación entre el Producto y la Sede seleccionados.")
 
-            for linea_bom in self.areas_asociadas_sede:
-                linea_bom.product_qty = 1
-                linea_bom.cantidad_final = 1
+            # for linea_bom in self.areas_asociadas_sede:
+            #     linea_bom.product_qty = 1
+            #     linea_bom.cantidad_final = 1
         else:
             if len(self.sede_seleccionada) >= len(self._origin.sede_seleccionada):
                 sede_nueva = None
@@ -341,8 +344,11 @@ class FormularioCliente(models.Model):
                                 if lineas_consultadas.product_tmpl_id.name in lineas_existentes_names:
                                     continue
                                 else:
+                                    lineas_consultadas.product_qty = 1
+                                    lineas_consultadas.cantidad_final = 1
                                     linea_bom_copy = lineas_consultadas.copy()
-                                    #linea_bom_copy.company_id = self.id
+                                    linea_bom_copy.product_qty = 1
+                                    linea_bom_copy.cantidad_final = 1
                                     linea_bom_copy.bom_id = self._origin.ldm_producto_nuevo.id
 
                             self.areas_asociadas_sede |= self._origin.ldm_producto_nuevo.bom_line_ids

@@ -407,12 +407,34 @@ class FormularioCliente(models.Model):
     def copy(self, default=None):
         self.ensure_one()
 
-        chosen_formulario = self.ldm_producto_nuevo #default.get('ldm_producto_nuevo')#   if default else ''
-        _logger.critical("chosen_formulario")
-        _logger.critical(chosen_formulario)
-        new_formulario = chosen_formulario.copy()# or _('%s (copy)') % self.name
 
-        default = dict(default or {}, ldm_producto_nuevo=new_formulario)
+        company_id = self.env.company
+        warehouse = self.env.ref('stock.warehouse0')
+        route_manufacture = warehouse.manufacture_pull_id.route_id.id
+        route_mto = warehouse.mto_pull_id.route_id.id
+
+        # Create Category
+        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Cliente'.title())])
+        if not existe_categoria:
+            categoria_consul_requer = self.env['product.category'].create({
+                'name': 'Formularios Cliente'.title(),
+            })
+        else:
+            categoria_consul_requer = existe_categoria
+
+        product_template = self.env['product.template'].create({
+            'name': self.ldm_producto_nuevo.product_tmpl_id.name + ' (copy)',
+            'purchase_ok': False,
+            'type': 'product',
+            'categ_id': categoria_consul_requer.id,
+            'company_id': company_id.id,
+            'route_ids': [(6, 0, [route_manufacture, route_mto])]
+        })
+
+        chosen_ldm_producto_nuevo_copy = self.ldm_producto_nuevo.copy() #default.get('ldm_producto_nuevo')#   if default else ''
+        chosen_ldm_producto_nuevo_copy.product_tmpl_id = product_template.id
+
+        default = dict(default or {}, ldm_producto_nuevo=chosen_ldm_producto_nuevo_copy)
         return super(FormularioCliente, self).copy(default)
 
 # crear campo nombre_proyecto en ordenes de compra por proveedor

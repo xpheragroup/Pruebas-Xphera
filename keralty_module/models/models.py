@@ -406,30 +406,14 @@ class FormularioCliente(models.Model):
 
     def copy(self, default=None):
         self.ensure_one()
-
-
+        
         company_id = self.env.company
         warehouse = self.env.ref('stock.warehouse0')
         route_manufacture = warehouse.manufacture_pull_id.route_id.id
         route_mto = warehouse.mto_pull_id.route_id.id
 
-        # Create Category
-        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Cliente'.title())])
-        if not existe_categoria:
-            categoria_consul_requer = self.env['product.category'].create({
-                'name': 'Formularios Cliente'.title(),
-            })
-        else:
-            categoria_consul_requer = existe_categoria
-
-        product_template = self.env['product.template'].create({
-            'name': self.ldm_producto_nuevo.product_tmpl_id.name + ' (copy)',
-            'purchase_ok': False,
-            'type': 'product',
-            'categ_id': categoria_consul_requer.id,
-            'company_id': company_id.id,
-            'route_ids': [(6, 0, [route_manufacture, route_mto])]
-        })
+        product_template = self.ldm_producto_nuevo.product_tmpl_id.copy()
+        product_template.name = product_template.name + ' (copy)'
 
         chosen_ldm_producto_nuevo_copy = self.ldm_producto_nuevo.copy() #default.get('ldm_producto_nuevo')#   if default else ''
         chosen_ldm_producto_nuevo_copy.product_tmpl_id = product_template.id

@@ -282,13 +282,23 @@ class FormularioCliente(models.Model):
                                             total_bom_line_ids += linea_bom
                                         else:
                                             total_bom_line_ids = linea_bom
-                    total_bom_line_ids = total_bom_line_ids - bom_created.bom_line_ids
+
+
+                    lineas_consultadas_names = {record.name for record in total_bom_line_ids}
+                    lineas_existentes_names = {record.product_id.name for record in bom_created.bom_line_ids}
+
+                    # for lineas_existentes in bom_created.bom_line_ids:
+                    for lineas_consultadas in total_bom_line_ids:
+                        if lineas_consultadas.product_id.name in lineas_existentes_names:
+                            continue
+                        else:
                     # Asignación de las líneas de materiales a la lista de materiales del nuevo producto creado.
-                    for linea_bom in total_bom_line_ids:
+                    # for linea_bom in total_bom_line_ids:
                         # validar que no se repita la copia de las líneas de materiales
-                        linea_bom_copy = linea_bom.copy()
-                        #linea_bom_copy.company_id = self.id
-                        linea_bom_copy.bom_id = bom_created.id
+
+                            linea_bom_copy = linea_bom.copy()
+                            #linea_bom_copy.company_id = self.id
+                            linea_bom_copy.bom_id = bom_created.id
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
 

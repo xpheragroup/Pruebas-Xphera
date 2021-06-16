@@ -407,9 +407,11 @@ class FormularioCliente(models.Model):
     def copy(self, default=None):
         self.ensure_one()
 
-        chosen_formulario = default.get('ldm_producto_nuevo') if default else ''
+        chosen_formulario = default.get('ldm_producto_nuevo')#   if default else ''
+        _logger.critical("chosen_formulario")
+        _logger.critical(chosen_formulario)
         new_formulario = chosen_formulario.copy()# or _('%s (copy)') % self.name
-        
+
         default = dict(default or {}, ldm_producto_nuevo=new_formulario)
         return super(FormularioCliente, self).copy(default)
 

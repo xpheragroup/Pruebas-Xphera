@@ -292,7 +292,7 @@ class FormularioCliente(models.Model):
                         if lineas_consultadas.product_tmpl_id.name in lineas_existentes_names:
                             continue
                         else:
-                            linea_bom_copy = linea_bom.copy()
+                            linea_bom_copy = lineas_consultadas.copy()
                             #linea_bom_copy.company_id = self.id
                             linea_bom_copy.bom_id = bom_created.id
 
@@ -341,7 +341,7 @@ class FormularioCliente(models.Model):
                                 if lineas_consultadas.product_tmpl_id.name in lineas_existentes_names:
                                     continue
                                 else:
-                                    linea_bom_copy = linea_bom.copy()
+                                    linea_bom_copy = lineas_consultadas.copy()
                                     #linea_bom_copy.company_id = self.id
                                     linea_bom_copy.bom_id = self.ldm_producto_nuevo.id
 

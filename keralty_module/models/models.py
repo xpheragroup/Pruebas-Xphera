@@ -406,19 +406,42 @@ class FormularioCliente(models.Model):
 
     def copy(self, default=None):
         self.ensure_one()
-        
+
+
         company_id = self.env.company
         warehouse = self.env.ref('stock.warehouse0')
         route_manufacture = warehouse.manufacture_pull_id.route_id.id
         route_mto = warehouse.mto_pull_id.route_id.id
 
-        product_template = self.ldm_producto_nuevo.product_tmpl_id.copy()
-        product_template.name = product_template.name + ' (copy)'
+        # Create Category
+        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Cliente'.title())])
+        if not existe_categoria:
+            categoria_consul_requer = self.env['product.category'].create({
+                'name': 'Formularios Cliente'.title(),
+            })
+        else:
+            categoria_consul_requer = existe_categoria
 
-        chosen_ldm_producto_nuevo_copy = self.ldm_producto_nuevo.copy() #default.get('ldm_producto_nuevo')#   if default else ''
-        chosen_ldm_producto_nuevo_copy.product_tmpl_id = product_template.id
+        product_template = self.env['product.template'].create({
+            'name': self.ldm_producto_nuevo.product_tmpl_id.name + ' (copy)',
+            'purchase_ok': False,
+            'type': 'product',
+            'categ_id': categoria_consul_requer.id,
+            'company_id': company_id.id,
+            'route_ids': [(6, 0, [route_manufacture, route_mto])]
+        })
 
-        default = dict(default or {}, ldm_producto_nuevo=chosen_ldm_producto_nuevo_copy)
+        # Create BOM
+        bom_created = self.env['mrp.bom'].create({
+            'product_tmpl_id': product_template.id,
+            'product_qty': 1.0,
+            'type': 'normal',
+        })
+        for linea_bom in self.areas_asociadas_sede:
+            linea_bom_copy = linea_bom.copy()
+            linea_bom_copy.bom_id = bom_created.id
+
+        default = dict(default or {}, ldm_producto_nuevo=bom_created)
         return super(FormularioCliente, self).copy(default)
 
 # crear campo nombre_proyecto en ordenes de compra por proveedor

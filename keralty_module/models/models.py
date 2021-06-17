@@ -304,8 +304,8 @@ class FormularioCliente(models.Model):
 
                         for lineas_existentes in bom_created.bom_line_ids:
                             if lineas_existentes.product_tmpl_id.name not in lineas_consultadas_names:
-                                # lineas_existentes.unlink()
-                                lineas_existentes.bom_id = False
+                                lineas_existentes.bom_id.unlink()
+                                # lineas_existentes.bom_id = False
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
 

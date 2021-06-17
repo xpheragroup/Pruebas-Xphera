@@ -262,6 +262,12 @@ class FormularioCliente(models.Model):
 
             total_bom_line_ids = None
 
+            if len(self.sede_seleccionada) == 0:
+                for linea in bom_created.bom_line_ids:
+                    linea.bom_id = False
+                    
+                self.areas_asociadas_sede |= bom_created.bom_line_ids
+
             for sede_product_template in self.sede_seleccionada:
                 for area in sede_product_template.bom_ids:
 

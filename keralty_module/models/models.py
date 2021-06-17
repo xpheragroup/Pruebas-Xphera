@@ -782,7 +782,7 @@ class FormularioValidacion(models.Model):
         else:
             categoria_consul_requer = existe_categoria
 
-        siguiente_codigo_secuencia = self.env['keralty_module.formulario.validación'].search([], order='id ASC')
+        siguiente_codigo_secuencia = self.env['keralty_module.formulario.validacion'].search([], order='id ASC')
             
         if len(siguiente_codigo_secuencia) > 0:
             siguiente_codigo_secuencia = siguiente_codigo_secuencia[-1].id + 1

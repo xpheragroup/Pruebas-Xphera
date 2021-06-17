@@ -877,9 +877,9 @@ class FormularioValidacion(models.Model):
                         linea_bom_copy = lineas_consultadas.copy()
                         linea_bom_copy.product_qty = 1
                         linea_bom_copy.cantidad_final = 1
-                        linea_bom_copy.bom_id = self.ldm_areas_derivadas.id
+                        linea_bom_copy.bom_id = bom_created_derivada.id
 
-                    self.areas_derivadas |= self.ldm_areas_derivadas.bom_line_ids
+                    self.areas_derivadas |= bom_created_derivada.bom_line_ids
 
                     for lineas_consultadas in total_bom_line_ids_disenio:
                         lineas_consultadas.product_qty = 1
@@ -887,9 +887,9 @@ class FormularioValidacion(models.Model):
                         linea_bom_copy = lineas_consultadas.copy()
                         linea_bom_copy.product_qty = 1
                         linea_bom_copy.cantidad_final = 1
-                        linea_bom_copy.bom_id = self.ldm_areas_disenio.id
+                        linea_bom_copy.bom_id = bom_created_disenio.id
 
-                    self.areas_diseño |= self.ldm_areas_disenio.bom_line_ids
+                    self.areas_diseño |= bom_created_disenio.bom_line_ids
 
     def action_realizar(self):
         total_boom_line_ids = None

@@ -755,15 +755,15 @@ class FormularioValidacion(models.Model):
     '''
     @api.onchange('formulario_cliente')
     def _onchange_formulario_cliente(self):
-        if not self._origin:
+        if self.formulario_cliente:
             objetoBusqueda = None
             # _logger.critical(self.formulario_cliente.areas_asociadas_sede)
             if self.formulario_cliente.areas_asociadas_sede:
                 self.areas_cliente = self.formulario_cliente.areas_asociadas_sede
 
-            if self.formulario_cliente:
-                if self.formulario_cliente.imagen_empresa_html:
-                    self.imagen_empresa_html = self.formulario_cliente.imagen_empresa_html
+            
+            if self.formulario_cliente.imagen_empresa_html:
+                self.imagen_empresa_html = self.formulario_cliente.imagen_empresa_html
 
 
             # Creación de categoría, producto y bom

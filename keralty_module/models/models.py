@@ -695,6 +695,10 @@ class FormularioValidacion(models.Model):
     total_m2_areas_diseno = fields.Float('Total M2 áreas diseño', default=1.0, digits=(16, 2), readonly=True, compute='_compute_m2_totales')
     total_m2_areas = fields.Float('Total M2 proyecto', default=1.0, digits=(16, 2), readonly=True, compute='_compute_m2_totales')
 
+    ldm_areas_cliente = fields.Many2many(string="Producto nuevo creado para áreas cliente.",
+                    comodel_name='mrp.bom',
+                    relation="bom_producto_nuevo_cliente",
+                    readonly=True, states={'draft': [('readonly', False)]},)
     ldm_areas_derivadas = fields.Many2many(string="Producto nuevo creado para áreas derivadas.",
                     comodel_name='mrp.bom',
                     relation="bom_producto_nuevo_derivadas",
@@ -755,141 +759,174 @@ class FormularioValidacion(models.Model):
     '''
     @api.onchange('formulario_cliente')
     def _onchange_formulario_cliente(self):
-        if self.formulario_cliente:
-            objetoBusqueda = None
-            # _logger.critical(self.formulario_cliente.areas_asociadas_sede)
-            if self.formulario_cliente.areas_asociadas_sede:
-                self.areas_cliente = self.formulario_cliente.areas_asociadas_sede
+        # if self.formulario_cliente:
+        objetoBusqueda = None
+        # _logger.critical(self.formulario_cliente.areas_asociadas_sede)
+        # if self.formulario_cliente.areas_asociadas_sede:
+        #     self.areas_cliente = self.formulario_cliente.areas_asociadas_sede
 
+        
+        if self.formulario_cliente.imagen_empresa_html:
+            self.imagen_empresa_html = self.formulario_cliente.imagen_empresa_html
+
+
+        # Creación de categoría, producto y bom
+
+        company_id = self.env.company
+        warehouse = self.env.ref('stock.warehouse0')
+        route_manufacture = warehouse.manufacture_pull_id.route_id.id
+        route_mto = warehouse.mto_pull_id.route_id.id
+
+        # Create Category
+        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Validación'.title())])
+        if not existe_categoria:
+            categoria_consul_requer = self.env['product.category'].create({
+                'name': 'Formularios Validación'.title(),
+            })
+        else:
+            categoria_consul_requer = existe_categoria
+
+        siguiente_codigo_secuencia = self.env['keralty_module.formulario.validacion'].search([], order='id ASC')
             
-            if self.formulario_cliente.imagen_empresa_html:
-                self.imagen_empresa_html = self.formulario_cliente.imagen_empresa_html
+        if len(siguiente_codigo_secuencia) > 0:
+            siguiente_codigo_secuencia = siguiente_codigo_secuencia[-1].id + 1
+        else:
+            siguiente_codigo_secuencia = 1
+
+        existe_producto_cliente = self.env['product.template'].search([('name', '=', 'Areas Cliente Validación (' + str(siguiente_codigo_secuencia) + ')' )])
+        existe_producto_derivada = self.env['product.template'].search([('name', '=', 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')' )])
+        existe_producto_disenio = self.env['product.template'].search([('name', '=', 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')' )])
+        
+        # Create Template Product cliente
+        if not existe_producto_cliente:
+            product_template_cliente = self.env['product.template'].create({
+                'name': 'Areas Cliente Validación (' + str(siguiente_codigo_secuencia) + ')',
+                'purchase_ok': False,
+                'type': 'product',
+                'categ_id': categoria_consul_requer.id,
+                'company_id': company_id.id,
+                'route_ids': [(6, 0, [route_manufacture, route_mto])]
+            })
+            # Create BOM
+            bom_created_cliente = self.env['mrp.bom'].create({
+                'product_tmpl_id': product_template_cliente.id,
+                'product_qty': 1.0,
+                'type': 'normal',
+            })
+        else:
+            product_template_cliente = existe_producto_cliente
+            # validar el bom seleccionado
+            bom_created_cliente = existe_producto_cliente.bom_ids[0]
+
+        # Create Template Product
+        if not existe_producto_derivada:
+            product_template_derivada = self.env['product.template'].create({
+                'name': 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')',
+                'purchase_ok': False,
+                'type': 'product',
+                'categ_id': categoria_consul_requer.id,
+                'company_id': company_id.id,
+                'route_ids': [(6, 0, [route_manufacture, route_mto])]
+            })
+            # Create BOM
+            bom_created_derivada = self.env['mrp.bom'].create({
+                'product_tmpl_id': product_template_derivada.id,
+                'product_qty': 1.0,
+                'type': 'normal',
+            })
+        else:
+            product_template_derivada = existe_producto_derivada
+            # validar el bom seleccionado
+            bom_created_derivada = existe_producto_derivada.bom_ids[0]
+
+        # Create Template Product diseño
+        if not existe_producto_disenio:
+
+            product_template_disenio = self.env['product.template'].create({
+                'name': 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')',
+                'purchase_ok': False,
+                'type': 'product',
+                'categ_id': categoria_consul_requer.id,
+                'company_id': company_id.id,
+                'route_ids': [(6, 0, [route_manufacture, route_mto])]
+            })
+            # Create BOM
+            bom_created_disenio = self.env['mrp.bom'].create({
+                'product_tmpl_id': product_template_disenio.id,
+                'product_qty': 1.0,
+                'type': 'normal',
+            })
+        else:
+            product_template_disenio = existe_producto_disenio
+            # validar el bom seleccionado
+            bom_created_disenio = product_template_disenio.bom_ids[0]
+
+        self.ldm_areas_cliente = bom_created_cliente
+        self.ldm_areas_derivadas = bom_created_derivada
+        self.ldm_areas_disenio = bom_created_disenio
 
 
-            # Creación de categoría, producto y bom
+        # Cargar Áreas Derivadas automáticamente
 
-            company_id = self.env.company
-            warehouse = self.env.ref('stock.warehouse0')
-            route_manufacture = warehouse.manufacture_pull_id.route_id.id
-            route_mto = warehouse.mto_pull_id.route_id.id
+        self.areas_cliente = None
+        self.areas_derivadas = None
+        self.areas_diseño = None
+        total_bom_line_ids_derivada = None
+        total_bom_line_ids_disenio = None
 
-            # Create Category
-            existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Validación'.title())])
-            if not existe_categoria:
-                categoria_consul_requer = self.env['product.category'].create({
-                    'name': 'Formularios Validación'.title(),
-                })
-            else:
-                categoria_consul_requer = existe_categoria
+        # carga las áreas cliente a un nuevo producto ldm
+        if self.formulario_cliente.areas_asociadas_sede:
+            for linea_bom_cliente in self.formulario_cliente.areas_asociadas_sede:
+                linea_bom_copy = linea_bom_cliente.copy()
+                linea_bom_copy.bom_id = bom_created_cliente.id
 
-            siguiente_codigo_secuencia = self.env['keralty_module.formulario.validacion'].search([], order='id ASC')
-                
-            if len(siguiente_codigo_secuencia) > 0:
-                siguiente_codigo_secuencia = siguiente_codigo_secuencia[-1].id + 1
-            else:
-                siguiente_codigo_secuencia = 1
-
-            existe_producto_derivada = self.env['product.template'].search([('name', '=', 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')' )])
-            existe_producto_disenio = self.env['product.template'].search([('name', '=', 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')' )])
-            
-            # Create Template Product
-            if not existe_producto_derivada:
-                product_template_derivada = self.env['product.template'].create({
-                    'name': 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')',
-                    'purchase_ok': False,
-                    'type': 'product',
-                    'categ_id': categoria_consul_requer.id,
-                    'company_id': company_id.id,
-                    'route_ids': [(6, 0, [route_manufacture, route_mto])]
-                })
-                # Create BOM
-                bom_created_derivada = self.env['mrp.bom'].create({
-                    'product_tmpl_id': product_template_derivada.id,
-                    'product_qty': 1.0,
-                    'type': 'normal',
-                })
-            else:
-                product_template_derivada = existe_producto_derivada
-                # validar el bom seleccionado
-                bom_created_derivada = existe_producto_derivada.bom_ids[0]
-
-            # Create Template Product diseño
-            if not existe_producto_disenio:
-
-                product_template_disenio = self.env['product.template'].create({
-                    'name': 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')',
-                    'purchase_ok': False,
-                    'type': 'product',
-                    'categ_id': categoria_consul_requer.id,
-                    'company_id': company_id.id,
-                    'route_ids': [(6, 0, [route_manufacture, route_mto])]
-                })
-                # Create BOM
-                bom_created_disenio = self.env['mrp.bom'].create({
-                    'product_tmpl_id': product_template_disenio.id,
-                    'product_qty': 1.0,
-                    'type': 'normal',
-                })
-            else:
-                product_template_disenio = existe_producto_disenio
-                # validar el bom seleccionado
-                bom_created_disenio = product_template_disenio.bom_ids[0]
-
-            self.ldm_areas_derivadas = bom_created_derivada
-            self.ldm_areas_disenio = bom_created_disenio
+        self.areas_cliente |= bom_created_cliente.bom_line_ids
 
 
-            # Cargar Áreas Derivadas automáticamente
+        for sede_product_template in self.formulario_cliente.sede_seleccionada:
+            for area in sede_product_template.bom_ids:
+                for linea_bom in area.bom_line_ids:
+                    # _logger.warning('LINEA BOOOOOM!!')
+                    # _logger.warning(linea_bom)
+                    for producto_seleccionado in self.formulario_cliente.producto_seleccionado:
+                        # if producto_seleccionado.name in linea_bom.display_name:\
+                        if linea_bom.bom_product_template_attribute_value_ids:
+                            if producto_seleccionado.name in linea_bom.bom_product_template_attribute_value_ids.name:
 
-            self.areas_derivadas = None
-            self.areas_diseño = None
-            total_bom_line_ids_derivada = None
-            total_bom_line_ids_disenio = None
+                                # if "Derivada" in linea_bom.child_bom_id.product_tmpl_id.categ_id.name:
+                                if "Derivada" in linea_bom.product_id.categ_id.name:
+                                    if total_bom_line_ids_derivada:
+                                        total_bom_line_ids_derivada += linea_bom#.child_bom_id
+                                    else:
+                                        total_bom_line_ids_derivada = linea_bom#.child_bom_id
 
-            for sede_product_template in self.formulario_cliente.sede_seleccionada:
-                for area in sede_product_template.bom_ids:
-                    for linea_bom in area.bom_line_ids:
-                        # _logger.warning('LINEA BOOOOOM!!')
-                        # _logger.warning(linea_bom)
-                        for producto_seleccionado in self.formulario_cliente.producto_seleccionado:
-                            # if producto_seleccionado.name in linea_bom.display_name:\
-                            if linea_bom.bom_product_template_attribute_value_ids:
-                                if producto_seleccionado.name in linea_bom.bom_product_template_attribute_value_ids.name:
+                            
+                                #if "Diseño" in linea_bom.child_bom_id.product_tmpl_id.categ_id.name:
+                                if "Diseño" in linea_bom.product_id.categ_id.name:
+                                    if total_bom_line_ids_disenio:
+                                        total_bom_line_ids_disenio += linea_bom#.child_bom_id
+                                    else:
+                                        total_bom_line_ids_disenio = linea_bom#.child_bom_id
 
-                                    # if "Derivada" in linea_bom.child_bom_id.product_tmpl_id.categ_id.name:
-                                    if "Derivada" in linea_bom.product_id.categ_id.name:
-                                        if total_bom_line_ids_derivada:
-                                            total_bom_line_ids_derivada += linea_bom#.child_bom_id
-                                        else:
-                                            total_bom_line_ids_derivada = linea_bom#.child_bom_id
+                for lineas_consultadas in total_bom_line_ids_derivada:
+                    lineas_consultadas.product_qty = 1
+                    lineas_consultadas.cantidad_final = 1
+                    linea_bom_copy = lineas_consultadas.copy()
+                    linea_bom_copy.product_qty = 1
+                    linea_bom_copy.cantidad_final = 1
+                    linea_bom_copy.bom_id = bom_created_derivada.id
 
-                                
-                                    #if "Diseño" in linea_bom.child_bom_id.product_tmpl_id.categ_id.name:
-                                    if "Diseño" in linea_bom.product_id.categ_id.name:
-                                        if total_bom_line_ids_disenio:
-                                            total_bom_line_ids_disenio += linea_bom#.child_bom_id
-                                        else:
-                                            total_bom_line_ids_disenio = linea_bom#.child_bom_id
+                self.areas_derivadas |= bom_created_derivada.bom_line_ids
 
-                    for lineas_consultadas in total_bom_line_ids_derivada:
-                        lineas_consultadas.product_qty = 1
-                        lineas_consultadas.cantidad_final = 1
-                        linea_bom_copy = lineas_consultadas.copy()
-                        linea_bom_copy.product_qty = 1
-                        linea_bom_copy.cantidad_final = 1
-                        linea_bom_copy.bom_id = bom_created_derivada.id
+                for lineas_consultadas in total_bom_line_ids_disenio:
+                    lineas_consultadas.product_qty = 1
+                    lineas_consultadas.cantidad_final = 1
+                    linea_bom_copy = lineas_consultadas.copy()
+                    linea_bom_copy.product_qty = 1
+                    linea_bom_copy.cantidad_final = 1
+                    linea_bom_copy.bom_id = bom_created_disenio.id
 
-                    self.areas_derivadas |= bom_created_derivada.bom_line_ids
-
-                    for lineas_consultadas in total_bom_line_ids_disenio:
-                        lineas_consultadas.product_qty = 1
-                        lineas_consultadas.cantidad_final = 1
-                        linea_bom_copy = lineas_consultadas.copy()
-                        linea_bom_copy.product_qty = 1
-                        linea_bom_copy.cantidad_final = 1
-                        linea_bom_copy.bom_id = bom_created_disenio.id
-
-                    self.areas_diseño |= bom_created_disenio.bom_line_ids
+                self.areas_diseño |= bom_created_disenio.bom_line_ids
 
     def action_realizar(self):
         total_boom_line_ids = None

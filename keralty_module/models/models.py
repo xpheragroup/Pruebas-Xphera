@@ -1713,7 +1713,7 @@ class FormularioValidacion(models.Model):
             areas_derivadas=bom_created_derivadas.bom_line_ids,
             areas_diseño=bom_created_disenio.bom_line_ids,)
 
-        return super(FormularioCliente, self).copy(default)
+        return super(FormularioValidacion, self).copy(default)
 
 
 

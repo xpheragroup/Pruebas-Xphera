@@ -710,7 +710,7 @@ class FormularioValidacion(models.Model):
         ('done', 'Realizado'),
         ('cancel', 'Cancelado')], string='Estado',
         copy=False, index=True, readonly=True,
-        store=True, tracking=True, compute='_compute_state', default='draft',
+        store=True, tracking=True, default='draft',
         help=" * Borrador: El proyecto se encuentra en edición.\n"
              " * Confirmado: El proyecto ha sido confirmado y no es editable por el cliente.\n"
              " * Realizado: El proyecto se ha ejecutado. \n"

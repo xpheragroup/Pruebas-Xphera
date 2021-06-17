@@ -300,11 +300,11 @@ class FormularioCliente(models.Model):
 
                     # Si hay más registros de bom_line en las existentes, se deben eliminar
                     if len(bom_created.bom_line_ids) > len(total_bom_line_ids):
-                        lineas_sobrantes = bom_created.bom_line_ids - total_bom_line_ids
+                        lineas_consultadas_names = {record.product_tmpl_id.name for record in total_bom_line_ids}
 
-                        for linea_sobrante in lineas_sobrantes:
-                            linea_sobrante.unlink()
-                            # linea_sobrante.bom_id = False
+                        for lineas_existentes in bom_created.bom_line_ids:
+                            if lineas_existentes.product_tmpl_id.name in lineas_consultadas_names:
+                                lineas_existentes.unlink()
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
 

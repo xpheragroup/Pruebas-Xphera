@@ -228,9 +228,6 @@ class FormularioCliente(models.Model):
 
         if not self._origin:
 
-            # Validar si producto existe
-            # verificar consulta de la secuencia por el modelo.
-            #siguiente_codigo_secuencia = self.env['ir.sequence'].next_by_code('keralty_module.formulario.cliente')
             siguiente_codigo_secuencia = self.env['keralty_module.formulario.cliente'].search([], order='id ASC')
             
             if len(siguiente_codigo_secuencia) > 0:
@@ -265,9 +262,6 @@ class FormularioCliente(models.Model):
 
             total_bom_line_ids = None
 
-            # for line_existente in bom_created.bom_line_ids:
-            #     line_existente.unlink()
-
             for sede_product_template in self.sede_seleccionada:
                 for area in sede_product_template.bom_ids:
 
@@ -300,8 +294,8 @@ class FormularioCliente(models.Model):
                             linea_bom_copy.bom_id = bom_created.id
 
                     # Si hay más registros de bom_line en las existentes, se deben eliminar
-                    if len(self.areas_asociadas_sede) > len(bom_created.bom_line_ids):
-                        lineas_sobrantes = self.areas_asociadas_sede - bom_created.bom_line_ids
+                    if len(bom_created.bom_line_ids) > len(total_bom_line_ids):
+                        lineas_sobrantes = bom_created.bom_line_ids - total_bom_line_ids
 
                         for linea_sobrante in lineas_sobrantes:
                             # linea_sobrante.unlink()

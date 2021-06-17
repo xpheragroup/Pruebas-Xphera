@@ -789,13 +789,13 @@ class FormularioValidacion(models.Model):
             else:
                 siguiente_codigo_secuencia = 1
 
-            existe_producto_derivada = self.env['product.template'].search([('name', '=', 'AreasDerivadas Validación (' + str(siguiente_codigo_secuencia) + ')' )])
-            existe_producto_disenio = self.env['product.template'].search([('name', '=', 'AreasDiseño Validación (' + str(siguiente_codigo_secuencia) + ')' )])
+            existe_producto_derivada = self.env['product.template'].search([('name', '=', 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')' )])
+            existe_producto_disenio = self.env['product.template'].search([('name', '=', 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')' )])
             
             # Create Template Product
             if not existe_producto_derivada:
                 product_template_derivada = self.env['product.template'].create({
-                    'name': 'AreasDerivadas Validación (' + str(siguiente_codigo_secuencia) + ')',
+                    'name': 'Areas Derivadas Validación (' + str(siguiente_codigo_secuencia) + ')',
                     'purchase_ok': False,
                     'type': 'product',
                     'categ_id': categoria_consul_requer.id,
@@ -817,7 +817,7 @@ class FormularioValidacion(models.Model):
             if not existe_producto_disenio:
 
                 product_template_disenio = self.env['product.template'].create({
-                    'name': 'AreasDiseño Validación (' + str(siguiente_codigo_secuencia) + ')',
+                    'name': 'Areas Diseño Validación (' + str(siguiente_codigo_secuencia) + ')',
                     'purchase_ok': False,
                     'type': 'product',
                     'categ_id': categoria_consul_requer.id,

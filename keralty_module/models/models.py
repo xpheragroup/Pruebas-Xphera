@@ -264,8 +264,7 @@ class FormularioCliente(models.Model):
 
             if len(self.sede_seleccionada) == 0:
                 for linea in bom_created.bom_line_ids:
-                    linea.bom_id = False
-                    
+                    linea.unlink()
                 self.areas_asociadas_sede |= bom_created.bom_line_ids
 
             for sede_product_template in self.sede_seleccionada:

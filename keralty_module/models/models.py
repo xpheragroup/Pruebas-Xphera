@@ -304,16 +304,13 @@ class FormularioCliente(models.Model):
 
                         for lineas_existentes in bom_created.bom_line_ids:
                             if lineas_existentes.product_tmpl_id.name not in lineas_consultadas_names:
-                                lineas_existentes.unlink()
+                                # lineas_existentes.unlink()
+                                lineas_existentes.bom_id = False
 
                     self.areas_asociadas_sede |= bom_created.bom_line_ids
 
                     if not total_bom_line_ids:
                         raise exceptions.UserError("No se encuentra ninguna asociación entre el Producto y la Sede seleccionados.")
-
-            # for linea_bom in self.areas_asociadas_sede:
-            #     linea_bom.product_qty = 1
-            #     linea_bom.cantidad_final = 1
         else:
             if len(self.sede_seleccionada) >= len(self._origin.sede_seleccionada):
                 sede_nueva = None

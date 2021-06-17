@@ -1617,6 +1617,105 @@ class FormularioValidacion(models.Model):
             line.areas_derivadas = line.areas_derivadas
             line.areas_diseño = line.areas_diseño
 
+    def copy(self, default=None):
+        self.ensure_one()
+
+
+        company_id = self.env.company
+        warehouse = self.env.ref('stock.warehouse0')
+        route_manufacture = warehouse.manufacture_pull_id.route_id.id
+        route_mto = warehouse.mto_pull_id.route_id.id
+
+        # Create Category
+        existe_categoria = self.env['product.category'].search([('name', '=', 'Formularios Validación'.title())])
+        if not existe_categoria:
+            categoria_consul_requer = self.env['product.category'].create({
+                'name': 'Formularios Validación'.title(),
+            })
+        else:
+            categoria_consul_requer = existe_categoria
+
+
+        # bom cliente
+        product_template_cliente = self.env['product.template'].create({
+            'name': self.ldm_areas_cliente.product_tmpl_id.name + ' (copy)',
+            'purchase_ok': False,
+            'type': 'product',
+            'categ_id': categoria_consul_requer.id,
+            'company_id': company_id.id,
+            'route_ids': [(6, 0, [route_manufacture, route_mto])]
+        })
+
+        # Create BOM cliente
+        bom_created_cliente = self.env['mrp.bom'].create({
+            'product_tmpl_id': product_template_cliente.id,
+            'product_qty': 1.0,
+            'type': 'normal',
+        })
+
+        # bom derivadas
+        product_template_derivadas = self.env['product.template'].create({
+            'name': self.ldm_areas_derivadas.product_tmpl_id.name + ' (copy)',
+            'purchase_ok': False,
+            'type': 'product',
+            'categ_id': categoria_consul_requer.id,
+            'company_id': company_id.id,
+            'route_ids': [(6, 0, [route_manufacture, route_mto])]
+        })
+
+        # Create BOM derivadas
+        bom_created_derivadas = self.env['mrp.bom'].create({
+            'product_tmpl_id': product_template_derivadas.id,
+            'product_qty': 1.0,
+            'type': 'normal',
+        })
+
+        # bom disenio
+        product_template_disenio = self.env['product.template'].create({
+            'name': self.ldm_areas_disenio.product_tmpl_id.name + ' (copy)',
+            'purchase_ok': False,
+            'type': 'product',
+            'categ_id': categoria_consul_requer.id,
+            'company_id': company_id.id,
+            'route_ids': [(6, 0, [route_manufacture, route_mto])]
+        })
+
+        # Create BOM disenio
+        bom_created_disenio = self.env['mrp.bom'].create({
+            'product_tmpl_id': product_template_disenio.id,
+            'product_qty': 1.0,
+            'type': 'normal',
+        })
+
+
+        for linea_bom in self.areas_cliente:
+            linea_bom_copy = linea_bom.copy()
+            linea_bom_copy.bom_id = bom_created_cliente.id
+
+        for linea_bom in self.areas_derivadas:
+            linea_bom_copy = linea_bom.copy()
+            linea_bom_copy.bom_id = bom_created_derivadas.id
+
+        for linea_bom in self.areas_diseño:
+            linea_bom_copy = linea_bom.copy()
+            linea_bom_copy.bom_id = bom_created_disenio.id
+
+
+
+        nombre_tecnico_copy = self.nombre_tecnico + ' (copy)'
+
+        default = dict(default or {},
+            nombre_tecnico=nombre_tecnico_copy, 
+            ldm_areas_cliente=bom_created_cliente, 
+            ldm_areas_derivadas=bom_created_derivadas, 
+            ldm_areas_disenio=bom_created_disenio, 
+            areas_cliente=bom_created_cliente.bom_line_ids,
+            areas_derivadas=bom_created_derivadas.bom_line_ids,
+            areas_diseño=bom_created_disenio.bom_line_ids,)
+
+        return super(FormularioCliente, self).copy(default)
+
+
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'

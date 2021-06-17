@@ -382,6 +382,10 @@
                         <h2><field name="nombre_tecnico" class="oe_inline" placeholder="Código Revisión" attrs="{'readonly':[('state','!=','draft')]}"/></h2>
                         <br/>
                         <span class="o_form_label">Ingrese la información solicitada para realizar la validación técnica de un proyecto:</span>
+
+                        <field name="ldm_areas_cliente" invisible="1"/>
+                        <field name="ldm_areas_derivadas" invisible="1"/>
+                        <field name="ldm_areas_disenio" invisible="1"/>
                     </div>
                     <group string="Datos del proyecto">
                         <group>

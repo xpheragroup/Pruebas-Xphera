@@ -221,7 +221,7 @@
                         <field name="producto_seleccionado" string="Selección de Producto(s)" widget="many2many_tags"/>
                         <field name="sede_seleccionada" string="Selección de Sedes(s)" widget="many2many_tags"/>
                         <field name="tipo_intervencion" />
-                        <field name="ldm_producto_nuevo" invisible="0"/>
+                        <field name="ldm_producto_nuevo" invisible="1"/>
                     </group>
                     <group string="Ubicación geográfica">
                         <br/>

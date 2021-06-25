@@ -637,7 +637,7 @@ class Picking(models.Model):
                     vals['origin_order'] = code_sc
                 if code_oc_rint:
                     vals['origin_order'] = code_oc_rint
-            vals['parent_id'] = False
+            vals['parent_id'] = False      
 
     @ api.model
     def write(self, vals):

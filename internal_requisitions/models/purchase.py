@@ -58,9 +58,9 @@ class InternalPurchase(models.Model):
      user_gen = fields.Many2one('res.users', string='Generó Reporte', required=False, copy=False)
      date_gen = fields.Datetime(string='Fecha generación último reporte', copy=False)
 
-     user_sol = fields.Many2one('res.users', string='Quien Solicita', required=True, copy=False)
+     user_sol = fields.Many2one('res.users', string='Quien Solicita')
      area_sol = fields.Many2one('hr.department', string='Área Solicitante')
-     date_sol = fields.Datetime(string='Fecha de Solicitud', required=True, copy=False)
+     date_sol = fields.Datetime(string='Fecha de Solicitud')
 
      description = fields.Char(string='Descripción Requisición', copy=False)
 
@@ -349,11 +349,12 @@ class InternalPurchase(models.Model):
      
      @api.onchange('requisicion_interna_purchase','order_line')
      def get_standard_price(self):
-          if self.requisicion_interna_purchase:
-               for line in self.order_line:
-                    name=line.product_id.name
-                    ref_int=line.product_id.default_code
-                    line.price_unit=self.env['product.template'].search([('name','=',name),('default_code','=',ref_int)],limit=1).standard_price
+          if not self.codigo_solicitud_cotizacion:
+               if self.requisicion_interna_purchase:
+                    for line in self.order_line:
+                         name=line.product_id.name
+                         ref_int=line.product_id.default_code
+                         line.price_unit=self.env['product.template'].search([('name','=',name),('default_code','=',ref_int)],limit=1).standard_price
 
      @api.model
      def _get_picking_type(self, company_id):

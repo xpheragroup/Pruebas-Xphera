@@ -81,11 +81,19 @@ class IrSequence(models.Model):
     def copy(self, default=None):
         default = dict(default or {})
         copied_count = self.search_count([('name','=like',u"Copy of {}%".format(self.name))])
+        copied_prefix = self.search_count([('prefix','=like',u"Copy of {}%".format(self.prefix))])
+        
         if not copied_count:
             new_name = u"Copia de {}".format(self.name)
         else:
             new_name = u"Copia de {} ({})".format(self.name, copied_count)
         
+        if not copied_prefix:
+            new_prefix = u"Copia de {}".format(self.prefix)
+        else:
+            new_prefix = u"Copia de {} ({})".format(self.prefix, copied_prefix)
+
         default['name'] = new_name
+        default['prefix'] = new_prefix
 
         return super(IrSequence,self).copy(default)
